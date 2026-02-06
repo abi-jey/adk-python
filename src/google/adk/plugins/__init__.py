@@ -15,6 +15,7 @@
 from .base_plugin import BasePlugin
 from .debug_logging_plugin import DebugLoggingPlugin
 from .logging_plugin import LoggingPlugin
+from .multimodal_tool_results_plugin import MultimodalToolResultsPlugin
 from .plugin_manager import PluginManager
 from .reflect_retry_tool_plugin import ReflectAndRetryToolPlugin
 
@@ -22,6 +23,7 @@ __all__ = [
     'BasePlugin',
     'DebugLoggingPlugin',
     'LoggingPlugin',
+    'MultimodalToolResultsPlugin',
     'PluginManager',
     'ReflectAndRetryToolPlugin',
 ]

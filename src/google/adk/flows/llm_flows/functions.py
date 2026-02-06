@@ -948,6 +948,21 @@ def __build_response_event(
     tool_context: ToolContext,
     invocation_context: InvocationContext,
 ) -> Event:
+  # Extract multimodal content parts (types.Part or list[types.Part]) from the
+  # result so they can be appended alongside the function response part in the
+  # content sent to the LLM.
+  extra_parts = []
+  if isinstance(function_result, types.Part):
+    extra_parts = [function_result]
+    function_result = None
+  elif (
+      isinstance(function_result, list)
+      and function_result
+      and isinstance(function_result[0], types.Part)
+  ):
+    extra_parts = list(function_result)
+    function_result = None
+
   # Specs requires the result to be a dict.
   if not isinstance(function_result, dict):
     function_result = {'result': function_result}
@@ -959,7 +974,7 @@ def __build_response_event(
 
   content = types.Content(
       role='user',
-      parts=[part_function_response],
+      parts=[part_function_response] + extra_parts,
   )
 
   function_response_event = Event(
