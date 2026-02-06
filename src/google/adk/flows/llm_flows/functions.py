@@ -958,7 +958,7 @@ def __build_response_event(
   elif (
       isinstance(function_result, list)
       and function_result
-      and isinstance(function_result[0], types.Part)
+      and all(isinstance(item, types.Part) for item in function_result)
   ):
     extra_parts = list(function_result)
     function_result = None
