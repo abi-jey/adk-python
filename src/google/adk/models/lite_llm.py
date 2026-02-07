@@ -1808,6 +1808,18 @@ class LiteLlm(BaseLlm):
   )
   ```
 
+  To use an external or third-party model provider with a custom endpoint:
+  ```
+  agent = Agent(
+      model=LiteLlm(
+          model="openai/my-model",
+          api_base="https://my-server.example.com/v1",
+          api_key="my-api-key",
+      ),
+      ...
+  )
+  ```
+
   Attributes:
     model: The name of the LiteLlm model.
     llm_client: The LLM client to use for the model.
@@ -1818,13 +1830,28 @@ class LiteLlm(BaseLlm):
 
   _additional_args: Dict[str, Any] = None
 
-  def __init__(self, model: str, **kwargs):
+  def __init__(
+      self,
+      model: str,
+      *,
+      api_base: Optional[str] = None,
+      api_key: Optional[str] = None,
+      **kwargs,
+  ):
     """Initializes the LiteLlm class.
 
     Args:
       model: The name of the LiteLlm model.
+      api_base: Optional base URL for the model API endpoint. Use this to
+        point to a custom or third-party model server (e.g.,
+        ``"https://my-server.example.com/v1"``).
+      api_key: Optional API key for authenticating with the model endpoint.
       **kwargs: Additional arguments to pass to the litellm completion api.
     """
+    if api_base is not None:
+      kwargs["api_base"] = api_base
+    if api_key is not None:
+      kwargs["api_key"] = api_key
     drop_params = kwargs.pop("drop_params", None)
     super().__init__(model=model, **kwargs)
     # Warn if using Gemini via LiteLLM
