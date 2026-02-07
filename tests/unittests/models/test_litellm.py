@@ -2921,6 +2921,30 @@ async def test_acompletion_additional_args_non_vertex(
 
 
 @pytest.mark.asyncio
+async def test_acompletion_explicit_api_base_and_api_key(
+    mock_acompletion, mock_client
+):
+  """Test that explicit api_base and api_key named params are forwarded."""
+  lite_llm_instance = LiteLlm(
+      model="openai/custom-model",
+      llm_client=mock_client,
+      api_base="https://my-server.example.com/v1",
+      api_key="custom-key-123",
+  )
+
+  async for _ in lite_llm_instance.generate_content_async(
+      LLM_REQUEST_WITH_FUNCTION_DECLARATION
+  ):
+    pass
+
+  mock_acompletion.assert_called_once()
+  _, kwargs = mock_acompletion.call_args
+  assert kwargs["api_base"] == "https://my-server.example.com/v1"
+  assert kwargs["api_key"] == "custom-key-123"
+  assert kwargs["model"] == "openai/custom-model"
+
+
+@pytest.mark.asyncio
 async def test_acompletion_with_drop_params(mock_acompletion, mock_client):
   lite_llm_instance = LiteLlm(
       model="test_model", llm_client=mock_client, drop_params=True
